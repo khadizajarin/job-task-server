@@ -8,8 +8,6 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json())
 
-// hXjBw8k1Kcwi6ZcU
-// task-manager
 
 const uri ="mongodb+srv://task-manager:hXjBw8k1Kcwi6ZcU@cluster0.lzj0eku.mongodb.net/?retryWrites=true&w=majority";
 
@@ -28,8 +26,8 @@ async function run() {
     // await client.connect();
 
     const todoCollection = client.db('task-management').collection('todo')
-    const ongoingCollection = client.db('task-management').collection('on-going')
-    const completeCollection = client.db('task-management').collection('completed')
+    const ongoingCollection = client.db('task-management').collection('ongoing')
+    const completeCollection = client.db('task-management').collection('complete')
 
 
     //CRUD operations on todo list
@@ -80,6 +78,28 @@ app.delete('/ongoing/:id', async (req,res) => {
   res.send(result);
 })
 
+
+// CRUD Operations on completed tasks
+app.post('/completed', async(req,res) => {
+  const newComplete = req.body;
+  console.log(newComplete);
+  const result = await completeCollection.insertOne(newComplete);
+  res.send(result);
+}) 
+
+app.get('/completed', async(req,res) => {
+  const cursor = completeCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
+
+app.delete('/completed/:id', async (req,res) => {
+  const id = req.params.id;
+  console.log(id);
+  const query = {_id : new ObjectId(id)}
+  const result = await completeCollection.deleteOne(query);
+  res.send(result);
+})
 
 
     
